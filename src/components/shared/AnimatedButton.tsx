@@ -23,10 +23,10 @@ export function AnimatedButton({
   fullWidth = false,
 }: AnimatedButtonProps) {
   const variants = {
-    primary: 'gradient-primary text-white shadow-lg shadow-purple-500/25',
+    primary: 'gradient-primary text-gray-900 shadow-lg shadow-green-500/25',
     secondary: 'gradient-secondary text-white shadow-lg shadow-teal-500/25',
     accent: 'gradient-accent text-white shadow-lg shadow-orange-500/25',
-    outline: 'bg-transparent border-2 border-purple-500 text-purple-400 hover:bg-purple-500/10',
+    outline: 'bg-transparent border-2 border-green-500 text-green-400 hover:bg-green-500/10',
   };
 
   const sizes = {

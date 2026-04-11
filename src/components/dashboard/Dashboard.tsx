@@ -39,7 +39,7 @@ export function Dashboard() {
               <div className="w-12 h-12 rounded-full gradient-primary flex items-center justify-center text-2xl">
                 {user.avatar}
               </div>
-              <div className="absolute -bottom-1 -left-1 w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center text-xs font-bold text-white border-2 border-background">
+              <div className="absolute -bottom-1 -left-1 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-xs font-bold text-white border-2 border-background">
                 {user.level}
               </div>
             </div>
@@ -73,8 +73,8 @@ export function Dashboard() {
             transition={{ delay: 0.2 }}
           >
             <GlassCard className="text-center">
-              <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mx-auto mb-2">
-                <Star className="w-6 h-6 text-purple-400" />
+              <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center mx-auto mb-2">
+                <Star className="w-6 h-6 text-green-400" />
               </div>
               <div className="text-2xl font-bold text-white">{user.xp}</div>
               <div className="text-sm text-gray-400">نقطة XP</div>
@@ -123,7 +123,7 @@ export function Dashboard() {
                 <span className="text-sm text-gray-400">{completedTasks}/{totalTasks}</span>
                 <button
                   onClick={() => setCurrentPage('tasks')}
-                  className="text-purple-400 hover:text-purple-300 transition-colors"
+                  className="text-green-400 hover:text-green-300 transition-colors"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
@@ -168,7 +168,7 @@ export function Dashboard() {
             {completedTasks < totalTasks && (
               <button
                 onClick={() => setCurrentPage('tasks')}
-                className="w-full mt-4 py-3 text-center text-purple-400 hover:text-purple-300 transition-colors text-sm"
+                className="text-green-400 hover:text-green-300 transition-colors text-sm"
               >
                 عرض جميع المهام
               </button>

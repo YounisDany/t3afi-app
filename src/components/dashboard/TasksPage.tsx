@@ -49,7 +49,7 @@ export function TasksPage() {
         {/* Daily Tasks */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <Clock className="w-5 h-5 text-purple-400" />
+            <Clock className="w-5 h-5 text-green-400" />
             <h2 className="text-lg font-bold text-white">المهام اليومية</h2>
           </div>
 
@@ -64,7 +64,7 @@ export function TasksPage() {
                 <GlassCard
                   glow={task.completed ? 'teal' : 'none'}
                   onClick={() => handleCompleteTask(task.id)}
-                  className={`transition-all ${!task.completed && 'cursor-pointer hover:border-purple-500/50'}`}
+                  className={`transition-all ${!task.completed && 'cursor-pointer hover:border-green-500/50'}`}
                   hover={!task.completed}
                 >
                   <div className="flex items-center gap-4">
@@ -72,7 +72,7 @@ export function TasksPage() {
                       className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${
                         task.completed
                           ? 'border-teal-400 bg-teal-400'
-                          : 'border-gray-500 hover:border-purple-400'
+                          : 'border-gray-500 hover:border-green-400'
                       }`}
                     >
                       {task.completed && <CheckCircle className="w-5 h-5 text-white" />}
@@ -85,7 +85,7 @@ export function TasksPage() {
                       <p className="text-sm text-gray-500">{task.description}</p>
                     </div>
 
-                    <div className={`flex items-center gap-1 ${task.completed ? 'text-teal-400' : 'text-purple-400'}`}>
+                    <div className={`flex items-center gap-1 ${task.completed ? 'text-teal-400' : 'text-green-400'}`}>
                       <Star className="w-4 h-4" />
                       <span className="font-bold">+{task.xpReward}</span>
                     </div>

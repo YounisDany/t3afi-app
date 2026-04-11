@@ -30,7 +30,7 @@ export function Navbar({ onStartClick, showAuthButton = true }: NavbarProps) {
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <img src="/t3afi-logo.png" alt="تعافي" className="h-10 w-10 sm:h-12 sm:w-12" />
+            <img src="/logo.png" alt="تعافي" className="h-10 w-10 sm:h-12 sm:w-12 rounded-full" />
             <span className="text-xl sm:text-2xl font-bold gradient-text">تعافي</span>
           </div>
 

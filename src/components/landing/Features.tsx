@@ -9,7 +9,7 @@ const features = [
     icon: BarChart3,
     title: 'تتبع الإدمان',
     description: 'راقب وقتك واكتشف أنماط استهلاكك للفيديوهات القصيرة',
-    color: 'purple' as const,
+    color: 'green' as const,
   },
   {
     icon: CheckCircle,
@@ -27,7 +27,7 @@ const features = [
     icon: Users,
     title: 'أصدقاء وتحفيز',
     description: 'شارك رحلتك واحصل على دعم المجتمع والأصدقاء',
-    color: 'purple' as const,
+    color: 'green' as const,
   },
 ];
 
@@ -57,7 +57,7 @@ export function Features() {
           {features.map((feature, index) => {
             const Icon = feature.icon;
             const colorClasses = {
-              purple: 'text-purple-400 bg-purple-500/20',
+              green: 'text-green-400 bg-green-500/20',
               teal: 'text-teal-400 bg-teal-500/20',
               orange: 'text-orange-400 bg-orange-500/20',
             };

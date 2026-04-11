@@ -24,7 +24,7 @@ export function XPProgress() {
       <div className="flex items-center gap-3">
         <div className="relative">
           <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center">
-            <span className="text-sm font-bold text-white">{user.level}</span>
+            <span className="text-sm font-bold text-gray-900">{user.level}</span>
           </div>
           <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-yellow-400 flex items-center justify-center">
             <Star className="w-2.5 h-2.5 text-yellow-900" />

@@ -13,9 +13,9 @@ export function Hero({ onStartClick }: HeroProps) {
     <section id="hero" className="relative min-h-screen flex items-center justify-center pt-20 pb-16 px-4 overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-green-500/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-600/10 rounded-full blur-3xl" />
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto text-center">
@@ -26,7 +26,7 @@ export function Hero({ onStartClick }: HeroProps) {
           transition={{ duration: 0.5 }}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8"
         >
-          <Sparkles className="w-4 h-4 text-purple-400" />
+          <Sparkles className="w-4 h-4 text-green-400" />
           <span className="text-sm text-gray-300">أول تطبيق عربي لمكافحة إدمان المقاطع القصيرة</span>
         </motion.div>
 
@@ -84,7 +84,7 @@ export function Hero({ onStartClick }: HeroProps) {
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-900 rounded-b-2xl z-10" />
               
               {/* Screen Content */}
-              <div className="absolute inset-2 top-4 rounded-[2.5rem] bg-gradient-to-b from-[#0F0F1A] to-[#1A1A2E] overflow-hidden">
+              <div className="absolute inset-2 top-4 rounded-[2.5rem] bg-gradient-to-b from-[#0A0F0A] to-[#0F1A0F] overflow-hidden">
                 {/* App Header */}
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-4">
@@ -103,8 +103,8 @@ export function Hero({ onStartClick }: HeroProps) {
                   
                   {/* Stats */}
                   <div className="grid grid-cols-2 gap-2 mb-3">
-                    <div className="p-3 rounded-xl bg-purple-500/20">
-                      <div className="text-lg font-bold text-purple-400">1,250</div>
+                    <div className="p-3 rounded-xl bg-green-500/20">
+                      <div className="text-lg font-bold text-green-400">1,250</div>
                       <div className="text-xs text-gray-400">نقطة XP</div>
                     </div>
                     <div className="p-3 rounded-xl bg-teal-500/20">
@@ -136,7 +136,7 @@ export function Hero({ onStartClick }: HeroProps) {
               transition={{ duration: 3, repeat: Infinity }}
               className="absolute -top-4 -right-4 p-3 glass rounded-2xl"
             >
-              <Shield className="w-6 h-6 text-purple-400" />
+              <Shield className="w-6 h-6 text-green-400" />
             </motion.div>
             
             <motion.div
@@ -161,7 +161,7 @@ export function Hero({ onStartClick }: HeroProps) {
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="w-8 h-8 rounded-full border-2 border-gray-800 bg-gradient-to-br from-purple-500 to-teal-500"
+                  className="w-8 h-8 rounded-full border-2 border-gray-800 bg-gradient-to-br from-green-500 to-teal-500"
                 />
               ))}
             </div>

@@ -31,7 +31,7 @@ export function TabBar() {
                 onClick={() => setCurrentPage(tab.id)}
                 className={cn(
                   'flex flex-col items-center justify-center py-2 px-3 sm:px-4 transition-all duration-200',
-                  isActive ? 'text-purple-400' : 'text-gray-400 hover:text-gray-300'
+                  isActive ? 'text-green-400' : 'text-gray-400 hover:text-gray-300'
                 )}
               >
                 <div className="relative">
@@ -39,7 +39,7 @@ export function TabBar() {
                   {isActive && (
                     <motion.div
                       layoutId="tab-indicator"
-                      className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-purple-400"
+                      className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-green-400"
                       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                     />
                   )}

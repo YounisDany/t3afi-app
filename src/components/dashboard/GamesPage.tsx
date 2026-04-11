@@ -1,14 +1,14 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Gamepad2, Gift, Award, Sparkles, Lock, CheckCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Gamepad2, Gift, Award, Sparkles, Lock, CheckCircle, X, Trophy, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 import { useAppStore } from '@/lib/store';
 import { GlassCard } from '@/components/shared/GlassCard';
 import { AnimatedButton } from '@/components/shared/AnimatedButton';
 
 const avatarOptions = ['👤', '🧑', '👨', '👩', '🧔', '👱', '👳', '🧕'];
-const avatarColors = ['from-purple-500 to-pink-500', 'from-teal-500 to-cyan-500', 'from-orange-500 to-yellow-500', 'from-pink-500 to-rose-500'];
+const avatarColors = ['from-green-400 to-teal-500', 'from-teal-500 to-cyan-500', 'from-orange-500 to-yellow-500', 'from-pink-500 to-rose-500'];
 
 const badges = [
   { id: 'b1', name: 'البداية', description: 'أول يوم ناجح', icon: '🎯', unlocked: true },
@@ -19,18 +19,94 @@ const badges = [
   { id: 'b6', name: 'الرياضي', description: 'ممارسة الرياضة 20 مرة', icon: '💪', unlocked: false },
 ];
 
-const miniGames = [
-  { id: 1, name: 'اختبار الوعي', description: 'اختبر معلوماتك عن آثار الإدمان', icon: '🧠', xp: 20 },
-  { id: 2, name: 'تنفس بعمق', description: 'تمرين تنفس للاسترخاء', icon: '🌬️', xp: 15 },
-  { id: 3, name: 'تحدي التركيز', description: 'اختبر قوة تركيزك', icon: '🎯', xp: 25 },
+// Quiz Questions
+const quizQuestions = [
+  {
+    question: 'ما هي المدة المتوسطة التي يقضيها الشخص العادي على تطبيقات الفيديو القصير يومياً؟',
+    options: ['30 دقيقة', 'ساعة واحدة', 'ساعتين', '3 ساعات أو أكثر'],
+    correct: 3,
+    explanation: 'الدراسات تشير إلى أن متوسط الاستخدام يتجاوز 3 ساعات يومياً!'
+  },
+  {
+    question: 'ما هو التأثير الأكثر شيوعاً لإدمان المقاطع القصيرة؟',
+    options: ['تحسن التركيز', 'صعوبة النوم', 'زيادة الإنتاجية', 'تحسن الذاكرة'],
+    correct: 1,
+    explanation: 'صعوبة النوم من أكثر الآثار شيوعاً بسبب الضوء الأزرق والتحفيز المستمر.'
+  },
+  {
+    question: 'ما هي "الدوبامين لوب" (Dopamine Loop)؟',
+    options: ['نوع من التمارين', 'دورة المكافأة في الدماغ', 'تطبيق مشهور', 'نوع من الفيديوهات'],
+    correct: 1,
+    explanation: 'الدوبامين لوب هي دورة تجعل الدماغ يطلب المزيد من المحتوى للحصول على نفس الشعور.'
+  },
+  {
+    question: 'كم عدد الساعات التي يمكن توفيرها شهرياً بتقليل الاستخدام ساعتين يومياً؟',
+    options: ['30 ساعة', '40 ساعة', '60 ساعة', '80 ساعة'],
+    correct: 2,
+    explanation: 'ساعتين × 30 يوم = 60 ساعة! هذا يعادل وقت كافٍ لتعلم مهارة جديدة.'
+  },
+  {
+    question: 'ما هي أفضل طريقة للتغلب على إدمان السكرول؟',
+    options: ['حذف التطبيقات فوراً', 'الاستمرار بالمشاهدة', 'التدرج في التقليل', 'تجاهل المشكلة'],
+    correct: 2,
+    explanation: 'التدرج في التقليل هو الأسلوب الأكثر فعالية واستدامة.'
+  },
 ];
 
 export function GamesPage() {
-  const { user } = useAppStore();
+  const { user, addXP } = useAppStore();
   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || '👤');
   const [selectedColor, setSelectedColor] = useState(0);
-  const [activeGame, setActiveGame] = useState<number | null>(null);
   const [dailyGiftClaimed, setDailyGiftClaimed] = useState(false);
+  
+  // Quiz Game State
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [gameFinished, setGameFinished] = useState(false);
+
+  const handleAnswer = (answerIndex: number) => {
+    if (selectedAnswer !== null) return;
+    
+    setSelectedAnswer(answerIndex);
+    setShowExplanation(true);
+    
+    if (answerIndex === quizQuestions[currentQuestion].correct) {
+      setScore(score + 1);
+    }
+  };
+
+  const nextQuestion = () => {
+    if (currentQuestion < quizQuestions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+      setSelectedAnswer(null);
+      setShowExplanation(false);
+    } else {
+      setGameFinished(true);
+      // Award XP based on score
+      const earnedXP = score * 10;
+      addXP(earnedXP);
+    }
+  };
+
+  const restartGame = () => {
+    setCurrentQuestion(0);
+    setScore(0);
+    setSelectedAnswer(null);
+    setShowExplanation(false);
+    setGameFinished(false);
+  };
+
+  const startGame = () => {
+    setIsPlaying(true);
+    setCurrentQuestion(0);
+    setScore(0);
+    setSelectedAnswer(null);
+    setShowExplanation(false);
+    setGameFinished(false);
+  };
 
   return (
     <div className="pb-24 pt-4 px-4">
@@ -49,9 +125,9 @@ export function GamesPage() {
           <GlassCard glow={dailyGiftClaimed ? 'none' : 'orange'} className="text-center">
             <div className="flex items-center justify-center gap-4">
               <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl ${
-                dailyGiftClaimed ? 'bg-gray-700' : 'bg-orange-500/20 animate-pulse'
+                dailyGiftClaimed ? 'bg-gray-700' : 'bg-green-500/20 animate-pulse'
               }`}>
-                <Gift className={`w-8 h-8 ${dailyGiftClaimed ? 'text-gray-500' : 'text-orange-400'}`} />
+                <Gift className={`w-8 h-8 ${dailyGiftClaimed ? 'text-gray-500' : 'text-green-400'}`} />
               </div>
               <div className="flex-1 text-right">
                 <h3 className="font-bold text-white">الهدايا اليومية</h3>
@@ -60,21 +136,199 @@ export function GamesPage() {
                 </p>
               </div>
               <AnimatedButton
-                onClick={() => setDailyGiftClaimed(true)}
+                onClick={() => {
+                  setDailyGiftClaimed(true);
+                  addXP(15);
+                }}
                 disabled={dailyGiftClaimed}
                 size="sm"
                 variant={dailyGiftClaimed ? 'outline' : 'accent'}
               >
-                {dailyGiftClaimed ? 'تم ✓' : 'استلام'}
+                {dailyGiftClaimed ? 'تم ✓' : 'استلام +15 XP'}
               </AnimatedButton>
             </div>
           </GlassCard>
         </motion.div>
 
+        {/* Main Game - Quiz */}
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <Gamepad2 className="w-5 h-5 text-green-400" />
+            <h2 className="text-lg font-bold text-white">اختبار الوعي</h2>
+            <span className="text-green-400 text-sm mr-auto">+{score * 10} XP</span>
+          </div>
+
+          <AnimatePresence mode="wait">
+            {!isPlaying ? (
+              <motion.div
+                key="intro"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+              >
+                <GlassCard glow="green" className="text-center">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center text-4xl mx-auto mb-4">
+                    🧠
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">اختبر معلوماتك</h3>
+                  <p className="text-gray-400 mb-4">
+                    أجب على 5 أسئلة عن آثار إدمان المقاطع القصيرة واكسب نقاط XP
+                  </p>
+                  <div className="flex items-center justify-center gap-4 text-sm text-gray-400 mb-6">
+                    <span>📝 {quizQuestions.length} أسئلة</span>
+                    <span>⏱️ وقت مفتوح</span>
+                    <span>⭐ {quizQuestions.length * 10} XP</span>
+                  </div>
+                  <AnimatedButton onClick={startGame} size="lg">
+                    ابدأ اللعب 🎮
+                  </AnimatedButton>
+                </GlassCard>
+              </motion.div>
+            ) : gameFinished ? (
+              <motion.div
+                key="finished"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+              >
+                <GlassCard className="text-center">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center text-5xl mx-auto mb-4">
+                    <Trophy className="w-12 h-12 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">أحسنت! 🎉</h3>
+                  <p className="text-gray-400 mb-4">
+                    حصلت على {score} من {quizQuestions.length} إجابات صحيحة
+                  </p>
+                  <div className="bg-green-500/20 rounded-xl p-4 mb-6">
+                    <p className="text-green-400 text-xl font-bold">
+                      +{score * 10} نقطة XP
+                    </p>
+                    <p className="text-gray-400 text-sm">تم إضافتها إلى رصيدك</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <AnimatedButton onClick={restartGame} variant="outline" className="flex-1">
+                      <RotateCcw className="w-4 h-4 ml-2" />
+                      العب مجدداً
+                    </AnimatedButton>
+                    <AnimatedButton onClick={() => setIsPlaying(false)} className="flex-1">
+                      إنهاء
+                    </AnimatedButton>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="playing"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+              >
+                <GlassCard>
+                  {/* Progress */}
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm text-gray-400">
+                      السؤال {currentQuestion + 1} من {quizQuestions.length}
+                    </span>
+                    <span className="text-sm text-green-400">
+                      النقاط: {score * 10} XP
+                    </span>
+                  </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="w-full h-2 bg-gray-700 rounded-full mb-6">
+                    <div 
+                      className="h-full gradient-primary rounded-full transition-all duration-300"
+                      style={{ width: `${((currentQuestion + 1) / quizQuestions.length) * 100}%` }}
+                    />
+                  </div>
+
+                  {/* Question */}
+                  <h3 className="text-lg font-bold text-white mb-6 text-center">
+                    {quizQuestions[currentQuestion].question}
+                  </h3>
+
+                  {/* Options */}
+                  <div className="space-y-3">
+                    {quizQuestions[currentQuestion].options.map((option, index) => {
+                      const isSelected = selectedAnswer === index;
+                      const isCorrect = index === quizQuestions[currentQuestion].correct;
+                      const showResult = selectedAnswer !== null;
+                      
+                      let buttonClass = 'bg-white/5 hover:bg-white/10 border border-transparent';
+                      if (showResult) {
+                        if (isCorrect) {
+                          buttonClass = 'bg-green-500/20 border-green-400 border-2';
+                        } else if (isSelected && !isCorrect) {
+                          buttonClass = 'bg-red-500/20 border-red-400 border-2';
+                        }
+                      }
+                      
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => handleAnswer(index)}
+                          disabled={selectedAnswer !== null}
+                          className={`w-full p-4 rounded-xl text-right transition-all ${buttonClass}`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                              showResult && isCorrect ? 'bg-green-500 text-white' :
+                              showResult && isSelected && !isCorrect ? 'bg-red-500 text-white' :
+                              'bg-gray-700 text-gray-300'
+                            }`}>
+                              {showResult && isCorrect ? '✓' : 
+                               showResult && isSelected && !isCorrect ? '✗' : 
+                               index + 1}
+                            </span>
+                            <span className="text-white">{option}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Explanation */}
+                  <AnimatePresence>
+                    {showExplanation && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mt-4"
+                      >
+                        <div className={`p-4 rounded-xl ${
+                          selectedAnswer === quizQuestions[currentQuestion].correct 
+                            ? 'bg-green-500/10 border border-green-500/30' 
+                            : 'bg-orange-500/10 border border-orange-500/30'
+                        }`}>
+                          <p className={`text-sm ${
+                            selectedAnswer === quizQuestions[currentQuestion].correct 
+                              ? 'text-green-400' 
+                              : 'text-orange-400'
+                          }`}>
+                            💡 {quizQuestions[currentQuestion].explanation}
+                          </p>
+                        </div>
+                        <AnimatedButton 
+                          onClick={nextQuestion} 
+                          fullWidth 
+                          className="mt-4"
+                        >
+                          {currentQuestion < quizQuestions.length - 1 ? 'السؤال التالي' : 'عرض النتيجة'}
+                        </AnimatedButton>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </GlassCard>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
         {/* Avatar Customization */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-purple-400" />
+            <Sparkles className="w-5 h-5 text-green-400" />
             <h2 className="text-lg font-bold text-white">تخصيص الأفاتار</h2>
           </div>
 
@@ -96,7 +350,7 @@ export function GamesPage() {
                     onClick={() => setSelectedAvatar(avatar)}
                     className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl transition-all ${
                       selectedAvatar === avatar
-                        ? 'bg-purple-500/30 ring-2 ring-purple-400'
+                        ? 'bg-green-500/30 ring-2 ring-green-400'
                         : 'bg-white/5 hover:bg-white/10'
                     }`}
                   >
@@ -122,43 +376,6 @@ export function GamesPage() {
               </div>
             </div>
           </GlassCard>
-        </div>
-
-        {/* Mini Games */}
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <Gamepad2 className="w-5 h-5 text-teal-400" />
-            <h2 className="text-lg font-bold text-white">ألعاب مصغرة</h2>
-          </div>
-
-          <div className="space-y-3">
-            {miniGames.map((game, index) => (
-              <motion.div
-                key={game.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <GlassCard hover glow="teal">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-teal-500/20 flex items-center justify-center text-2xl">
-                      {game.icon}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-medium text-white">{game.name}</h3>
-                      <p className="text-sm text-gray-400">{game.description}</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-purple-400 font-bold">+{game.xp} XP</div>
-                      <AnimatedButton size="sm" onClick={() => setActiveGame(game.id)}>
-                        العب
-                      </AnimatedButton>
-                    </div>
-                  </div>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </div>
         </div>
 
         {/* Badges */}
@@ -187,7 +404,7 @@ export function GamesPage() {
                   <h4 className="font-medium text-white text-sm">{badge.name}</h4>
                   <p className="text-xs text-gray-500 mt-1">{badge.description}</p>
                   {badge.unlocked && (
-                    <CheckCircle className="w-4 h-4 text-teal-400 mx-auto mt-2" />
+                    <CheckCircle className="w-4 h-4 text-green-400 mx-auto mt-2" />
                   )}
                 </GlassCard>
               </motion.div>

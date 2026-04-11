@@ -6,16 +6,16 @@ import { cn } from '@/lib/utils';
 interface GlassCardProps {
   children: React.ReactNode;
   className?: string;
-  glow?: 'purple' | 'teal' | 'orange' | 'none';
+  glow?: 'green' | 'teal' | 'orange' | 'none';
   hover?: boolean;
   onClick?: () => void;
 }
 
 export function GlassCard({ children, className, glow = 'none', hover = false, onClick }: GlassCardProps) {
   const glowStyles = {
-    purple: 'hover:shadow-[0_0_30px_rgba(139,92,246,0.3)]',
+    green: 'shadow-[0_0_30px_rgba(74,222,128,0.2)]',
     teal: 'hover:shadow-[0_0_30px_rgba(20,184,166,0.3)]',
-    orange: 'hover:shadow-[0_0_30px_rgba(249,115,22,0.3)]',
+    orange: 'shadow-[0_0_30px_rgba(249,115,22,0.2)]',
     none: '',
   };
 
