@@ -90,6 +90,9 @@ interface AppState {
   // Navigation
   setCurrentPage: (page: AppState['currentPage']) => void;
   setShowLoginModal: (show: boolean) => void;
+  
+  // Friends
+  addFriend: (friend: Friend) => void;
 }
 
 // Default tasks
@@ -331,6 +334,13 @@ export const useAppStore = create<AppState>()(
 
       setCurrentPage: (page) => set({ currentPage: page }),
       setShowLoginModal: (show) => set({ showLoginModal: show }),
+      
+      addFriend: (friend: Friend) => {
+        const { friends } = get();
+        if (!friends.some(f => f.id === friend.id)) {
+          set({ friends: [...friends, friend] });
+        }
+      },
     }),
     {
       name: 't3afi-storage',
