@@ -25,10 +25,11 @@ import { GamesPage } from '@/components/dashboard/GamesPage';
 import { ProfilePage } from '@/components/dashboard/ProfilePage';
 
 import { useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, usePathname } from 'next/navigation';
 
 export default function Home() {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const {
     isLoggedIn,
     hasCompletedOnboarding,
@@ -39,9 +40,21 @@ export default function Home() {
     acceptFriendInvite,
   } = useAppStore();
 
-  // Handle invite link
+  // Handle invite link - support both /invite/:id and ?invite=:id
   useEffect(() => {
-    const inviteCode = searchParams.get('invite');
+    let inviteCode: string | null = null;
+
+    // Check URL parameter first (?invite=xxx)
+    inviteCode = searchParams.get('invite');
+
+    // Check pathname (/invite/xxx)
+    if (!inviteCode && pathname) {
+      const inviteMatch = pathname.match(/\/invite\/([^/]+)/);
+      if (inviteMatch) {
+        inviteCode = inviteMatch[1];
+      }
+    }
+
     if (inviteCode) {
       if (!isLoggedIn) {
         // Store invite for later when user logs in
@@ -52,7 +65,7 @@ export default function Home() {
         acceptFriendInvite(inviteCode);
       }
     }
-  }, [searchParams, isLoggedIn, setPendingInvite, setShowLoginModal, acceptFriendInvite]);
+  }, [searchParams, pathname, isLoggedIn, setPendingInvite, setShowLoginModal, acceptFriendInvite]);
 
   // Show Landing Page for non-logged in users
   if (!isLoggedIn) {
