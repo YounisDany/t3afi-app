@@ -1,6 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
+import { Suspense } from 'react';
 import { useAppStore } from '@/lib/store';
 import { Navbar } from '@/components/shared/Navbar';
 import { TabBar } from '@/components/shared/TabBar';
@@ -24,53 +25,25 @@ import { FriendsPage } from '@/components/dashboard/FriendsPage';
 import { GamesPage } from '@/components/dashboard/GamesPage';
 import { ProfilePage } from '@/components/dashboard/ProfilePage';
 
-import { useEffect } from 'react';
-import { useSearchParams, usePathname } from 'next/navigation';
+// Invite Handler
+import { InviteHandler } from '@/components/InviteHandler';
 
 export default function Home() {
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
   const {
     isLoggedIn,
     hasCompletedOnboarding,
     currentPage,
     showLoginModal,
     setShowLoginModal,
-    setPendingInvite,
-    acceptFriendInvite,
   } = useAppStore();
-
-  // Handle invite link - support both /invite/:id and ?invite=:id
-  useEffect(() => {
-    let inviteCode: string | null = null;
-
-    // Check URL parameter first (?invite=xxx)
-    inviteCode = searchParams.get('invite');
-
-    // Check pathname (/invite/xxx)
-    if (!inviteCode && pathname) {
-      const inviteMatch = pathname.match(/\/invite\/([^/]+)/);
-      if (inviteMatch) {
-        inviteCode = inviteMatch[1];
-      }
-    }
-
-    if (inviteCode) {
-      if (!isLoggedIn) {
-        // Store invite for later when user logs in
-        setPendingInvite(inviteCode);
-        setShowLoginModal(true);
-      } else {
-        // User already logged in, accept invite directly
-        acceptFriendInvite(inviteCode);
-      }
-    }
-  }, [searchParams, pathname, isLoggedIn, setPendingInvite, setShowLoginModal, acceptFriendInvite]);
 
   // Show Landing Page for non-logged in users
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen bg-background">
+        <Suspense fallback={null}>
+          <InviteHandler />
+        </Suspense>
         <Navbar onStartClick={() => setShowLoginModal(true)} />
         <Hero onStartClick={() => setShowLoginModal(true)} />
         <Features />
@@ -87,6 +60,9 @@ export default function Home() {
   if (!hasCompletedOnboarding) {
     return (
       <div className="min-h-screen bg-background">
+        <Suspense fallback={null}>
+          <InviteHandler />
+        </Suspense>
         <OnboardingFlow />
       </div>
     );
@@ -95,6 +71,9 @@ export default function Home() {
   // Show Main App
   return (
     <div className="min-h-screen bg-background">
+      <Suspense fallback={null}>
+        <InviteHandler />
+      </Suspense>
       <AnimatePresence mode="wait">
         {currentPage === 'dashboard' && (
           <motion.div
