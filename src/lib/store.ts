@@ -60,39 +60,42 @@ interface AppState {
   isLoggedIn: boolean;
   hasCompletedOnboarding: boolean;
   onboardingStep: number;
-  
+
   // Tasks
   dailyTasks: Task[];
   challengeTasks: Task[];
-  
+
   // Friends
   friends: Friend[];
-  
+  pendingInvite: string | null; // Store invite code from URL
+
   // UI State
   currentPage: 'landing' | 'dashboard' | 'tasks' | 'friends' | 'games' | 'profile';
   showLoginModal: boolean;
-  
+
   // Actions
   login: (name: string) => void;
   logout: () => void;
   skipLogin: () => void;
   setOnboardingStep: (step: number) => void;
   completeOnboarding: (answers: AssessmentAnswers, goal: string, challengeDays: number) => void;
-  
+
   // Tasks
   completeTask: (taskId: string) => void;
   resetDailyTasks: () => void;
-  
+
   // XP & Level
   addXP: (amount: number) => void;
   updateStreak: () => void;
-  
+
   // Navigation
   setCurrentPage: (page: AppState['currentPage']) => void;
   setShowLoginModal: (show: boolean) => void;
-  
+
   // Friends
   addFriend: (friend: Friend) => void;
+  setPendingInvite: (invite: string | null) => void;
+  acceptFriendInvite: (inviterId: string) => void;
 }
 
 // Default tasks
@@ -178,16 +181,18 @@ export const useAppStore = create<AppState>()(
       dailyTasks: defaultDailyTasks,
       challengeTasks: defaultChallengeTasks,
       friends: defaultFriends,
+      pendingInvite: null,
       currentPage: 'landing',
       showLoginModal: false,
 
       // Actions
       login: (name: string) => {
+        const { pendingInvite, friends } = get();
         const newUser: User = {
           id: Date.now().toString(),
           name,
           avatar: '👤',
-          xp: 0,
+          xp: pendingInvite ? 50 : 0, // Bonus XP if invited
           level: 1,
           streak: 0,
           lastActiveDate: new Date().toDateString(),
@@ -203,7 +208,28 @@ export const useAppStore = create<AppState>()(
           completedTasks: [],
           joinedAt: new Date().toISOString(),
         };
-        set({ user: newUser, isLoggedIn: true, showLoginModal: false });
+
+        // If there's a pending invite, add the inviter as a friend
+        if (pendingInvite) {
+          const inviterFriend: Friend = {
+            id: pendingInvite,
+            name: 'صديق من الدعوة',
+            avatar: '👤',
+            streak: 0,
+            xp: 0,
+            level: 1,
+            status: 'online',
+          };
+          set({
+            user: newUser,
+            isLoggedIn: true,
+            showLoginModal: false,
+            pendingInvite: null,
+            friends: [...friends, inviterFriend],
+          });
+        } else {
+          set({ user: newUser, isLoggedIn: true, showLoginModal: false });
+        }
       },
 
       logout: () => {
@@ -334,11 +360,38 @@ export const useAppStore = create<AppState>()(
 
       setCurrentPage: (page) => set({ currentPage: page }),
       setShowLoginModal: (show) => set({ showLoginModal: show }),
-      
+
       addFriend: (friend: Friend) => {
         const { friends } = get();
         if (!friends.some(f => f.id === friend.id)) {
           set({ friends: [...friends, friend] });
+        }
+      },
+
+      setPendingInvite: (invite: string | null) => {
+        set({ pendingInvite: invite });
+      },
+
+      acceptFriendInvite: (inviterId: string) => {
+        const { user, friends, addXP } = get();
+        if (!user) return;
+
+        // Add the inviter as a friend
+        const inviterFriend: Friend = {
+          id: inviterId,
+          name: 'صديق من الدعوة',
+          avatar: '👤',
+          streak: 0,
+          xp: 0,
+          level: 1,
+          status: 'online',
+        };
+
+        if (!friends.some(f => f.id === inviterId)) {
+          set({
+            friends: [...friends, inviterFriend],
+            user: { ...user, xp: user.xp + 50 }, // Bonus XP
+          });
         }
       },
     }),
@@ -350,6 +403,8 @@ export const useAppStore = create<AppState>()(
         hasCompletedOnboarding: state.hasCompletedOnboarding,
         dailyTasks: state.dailyTasks,
         challengeTasks: state.challengeTasks,
+        pendingInvite: state.pendingInvite,
+        friends: state.friends,
       }),
     }
   )

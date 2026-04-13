@@ -81,16 +81,16 @@ export function FriendsPage() {
   };
 
   const copyInviteLink = () => {
-    const link = `https://t3afi.app/invite/${user?.id || 'guest'}`;
+    const link = `https://t3afi-app.vercel.app/?invite=${user?.id || 'guest'}`;
     navigator.clipboard?.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const shareInvite = async () => {
-    const link = `https://t3afi.app/invite/${user?.id || 'guest'}`;
+    const link = `https://t3afi-app.vercel.app/?invite=${user?.id || 'guest'}`;
     const text = 'انضم إليّ في تطبيق تعافي للتخلص من إدمان المقاطع القصيرة! 🌱';
-    
+
     if (navigator.share) {
       try {
         await navigator.share({ title: 'تعافي', text, url: link });
@@ -373,7 +373,7 @@ export function FriendsPage() {
                 
                 <div className="p-4 bg-white/5 rounded-xl mb-4">
                   <code className="text-sm text-green-400 break-all">
-                    https://t3afi.app/invite/{user?.id || 'guest'}
+                    https://t3afi-app.vercel.app/?invite={user?.id || 'guest'}
                   </code>
                 </div>
                 

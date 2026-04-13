@@ -24,14 +24,35 @@ import { FriendsPage } from '@/components/dashboard/FriendsPage';
 import { GamesPage } from '@/components/dashboard/GamesPage';
 import { ProfilePage } from '@/components/dashboard/ProfilePage';
 
+import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+
 export default function Home() {
-  const { 
-    isLoggedIn, 
-    hasCompletedOnboarding, 
-    currentPage, 
-    showLoginModal, 
-    setShowLoginModal 
+  const searchParams = useSearchParams();
+  const {
+    isLoggedIn,
+    hasCompletedOnboarding,
+    currentPage,
+    showLoginModal,
+    setShowLoginModal,
+    setPendingInvite,
+    acceptFriendInvite,
   } = useAppStore();
+
+  // Handle invite link
+  useEffect(() => {
+    const inviteCode = searchParams.get('invite');
+    if (inviteCode) {
+      if (!isLoggedIn) {
+        // Store invite for later when user logs in
+        setPendingInvite(inviteCode);
+        setShowLoginModal(true);
+      } else {
+        // User already logged in, accept invite directly
+        acceptFriendInvite(inviteCode);
+      }
+    }
+  }, [searchParams, isLoggedIn, setPendingInvite, setShowLoginModal, acceptFriendInvite]);
 
   // Show Landing Page for non-logged in users
   if (!isLoggedIn) {
